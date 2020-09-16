@@ -1,6 +1,6 @@
 # macports
 
-This script is used to configure https://macports.org directly from the git repo. I have found that using mac ports this way enables support for bleeding edge OS versions or CPU architectures. 
+This script is used to configure https://macports.org directly from their git repo. I have found that using mac ports this way enables support for bleeding edge OS versions or CPU architectures. 
 
 ## Usage
 __EXAMPLE__
