@@ -1,0 +1,279 @@
+#!/bin/bash
+# Use built in bash to avoid issues with deleting the macports version
+
+set -euo pipefail
+IFS=$'\n\t'
+shopt -s nullglob
+shopt -s nocaseglob
+
+# kill subprocesses if you kill this script
+handle_sigint() {
+    for proc in $(jobs -p); do
+        kill $proc
+    done
+}
+trap handle_sigint 2
+
+# Define global variables and set defaults
+CLEANUP_MACPORTS=1
+INSTALL_MACPORTS=1
+PORTLIST_MACPORTS=1
+UPGRADE_PORTS=1
+
+# print out usage
+usage() {
+    cat <<EOF
+USAGE: ./macports -c -i -p
+OPTIONS:
+   -c    Fully remove macports
+   -i    Install macports and ports tree from git
+   -p    Install ports from file list
+   -u    Upgrade installed ports
+   -h    Help
+EOF
+    exit
+}
+
+# process options and arguments
+while getopts "hcipu" OPTION; do
+    case $OPTION in
+    h) usage && exit 1 ;;
+    c) CLEANUP_MACPORTS=0 ;;
+    i) INSTALL_MACPORTS=0 ;;
+    p) PORTLIST_MACPORTS=0 ;;
+    u) UPGRADE_PORTS=0 ;;
+    esac
+done
+
+# get sudo
+sudo -p "Provide sudo password: " echo "Elevated"
+
+# background sudo revalidate until script ends
+{
+    while sleep 290; do
+        sudo -v
+        echo -e "\nrefreshing sudo timeout"
+    done
+} &
+
+cleanup_macports() {
+    # remove user account
+    if (dscl . -read /Users/macports >/dev/null 2>&1); then
+        sudo dscl . -delete /Users/macports
+    fi
+
+    # remove macports group
+    if (dscl . -read /groups/macports >/dev/null 2>&1); then
+        sudo dscl . -delete /groups/macports
+    fi
+
+    # build array of directorys to cleanup
+    declare -a TARGET_DIRS=("/opt/local"
+        "/opt/ports"
+        "/opt/mports"
+        "/Applications/DarwinPorts"
+        "/Applications/MacPorts"
+        "/Library/LaunchDaemons/org.macports.*"
+        "/Library/Receipts/DarwinPorts*.pkg"
+        "/Library/Receipts/MacPorts*.pkg"
+        "/Library/StartupItems/DarwinPortsStartup"
+        "/Library/Tcl/darwinports1.0"
+        "/Library/Tcl/macports1.0"
+        "~/.macports"
+    )
+
+    # figure out how to set default shell back so it's not removed
+
+    # Loop through directories and clean them up
+    for DIR in "${TARGET_DIRS[@]}"; do
+        if (ls "${DIR}" 1>/dev/null 2>&1); then
+            echo "removing ${DIR}"
+            sudo /bin/rm -r "${DIR}"
+        fi
+    done
+
+}
+
+build_port() {
+    cd /opt/mports/macports-base
+    echo "Configuring and installing macports-base"
+    ./configure --enable-readline
+    echo "Make"
+    make
+    echo "make install"
+    sudo make install
+    echo "make distclean"
+    make distclean
+}
+
+install_macports() {
+    echo "Installing macports"
+    # Check for and install xcode command line tools
+    if (xcode-select --install >/dev/null 2>&1); then
+        echo "Install xcode cli tools.. accept GUI prompts"
+        echo "This was failing on big sur beta. Download from developer.apple.com directly if so"
+        read -n 1 -r -s -p $'Press any key after cli tools install has completed\n'
+    else
+        echo "Xcode command line tools available"
+    fi
+
+    # set xcode path favoring beta
+    if [[ -d /Applications/Xcode-beta.app ]]; then
+        XCODE_PATH="/Applications/Xcode-beta.app/Contents/Developer"
+    else
+        XCODE_PATH="/Applications/Xcode.app/Contents/Developer"
+    fi
+    # handle no xcode found in this section
+
+    sudo xcode-select -s $XCODE_PATH
+    # accept xcode license
+    sudo xcodebuild -license accept
+
+    # test xcode with gcc command throw error if it fails
+
+    # setup ports directory
+    if ! [[ -d /opt/mports ]]; then
+        echo "Creating /opt/mports"
+        sudo mkdir -p /opt/mports
+        sudo chgrp admin /opt/mports
+        sudo chmod g+w /opt/mports
+    else
+        echo "Port dir /opt/mports exists already.."
+    fi
+
+    # get macports base code
+    if [[ -d /opt/mports/macports-base ]]; then
+        echo "Updating ports base"
+        if (git -C /opt/mports/macports-base diff-index --quiet HEAD); then
+            git -C /opt/mports/macports-base pull
+            echo "ports base updated, rebuilding now..."
+            build_port
+        fi
+        # test if a newer version exists in the master branch and built it if so
+    else
+        echo "Cloning macports-base to /opt/mports/macports-base"
+        git clone https://github.com/macports/macports-base.git /opt/mports/macports-base
+        # git checkout v2.6.0
+        echo "building ports base becasue it didin't exist"
+        build_port
+    fi
+
+    # hackup zsh and bash path  so ports is in it.
+    # ~/.zshenv
+
+    # get macports ports from git
+    if [[ -d /opt/mports/macports-ports ]]; then
+        echo "Updating ports"
+        git -C /opt/mports/macports-ports pull
+    else
+        echo "Cloning macports-ports to /opt/mports/macports-ports"
+        git clone https://github.com/macports/macports-ports.git /opt/mports/macports-ports
+
+        export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+        export MANPATH=/opt/local/share/man
+        export DISPLAY=:0.0
+        #sudo port selfupdate
+    fi
+
+    # update sources.conf
+    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
+        echo 'Updating /opt/local/etc/macports/sources.conf'
+        echo "file:///opt/mports/macports-ports [default]" | sudo tee /opt/local/etc/macports/sources.conf
+    fi
+
+    # sync the ports tree
+    /opt/local/bin/port sync
+
+}
+
+install_ports() {
+    echo "Installing ports from ~/blakeconfig/portlist"
+    # test for the provided path
+    if ! [[ -e ~/blakeconfig/portlist ]]; then
+        echo "Error: port file not found! ~/blakeconfig/portlist"
+        exit 1
+    fi
+
+    # loop trhough the list of ports and install them
+    #PORTS=$(< ~/blakeconfig/portlist)
+    PORT_VARIANT=""
+    read -d '•' -a PORTS <~/blakeconfig/portlist
+    for PORT in "${PORTS[@]}"; do
+        echo "installing $PORT"
+        #        if [[ "$PORT" == "ffmpeg" ]]; then
+        #        echo "port is ffmpeg"
+        #        PORT_VARIANT="+nonfree +darwinssl"
+        #        fi
+        PORT_ITSELF=$(cut -d ' ' -f 1 <<<"$PORT")
+        PORT_VARIANT_1=$(cut -d ' ' -f 2 <<<"$PORT")
+        PORT_VARIANT_2=$(cut -d ' ' -f 3 <<<"$PORT")
+        PORT_VARIANT_3=$(cut -d ' ' -f 4 <<<"$PORT")
+        PORT_VARIANT_4=$(cut -d ' ' -f 5 <<<"$PORT")
+        PORT_VARIANT_5=$(cut -d ' ' -f 6 <<<"$PORT")
+        sudo /opt/local/bin/port -N install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
+    done
+
+    # fixups after port installation
+    sudo /opt/local/bin/port select --set python python38 || true
+    sudo /opt/local/bin/port select --set python3 python38 || true
+    sudo /opt/local/bin/port select --set virtualenv virtualenv38 || true
+    sudo /opt/local/bin/port select --set pip pip38 || true
+    sudo /opt/local/bin/port select --set pip3 pip38 || true
+    sudo /opt/local/bin/port -f activate rsync || true
+}
+
+update_ports() {
+    echo "Updating ports base"
+    if (git -C /opt/mports/macports-base diff-index --quiet HEAD); then
+        git -C /opt/mports/macports-base pull
+        echo "ports base updated, rebuilding now..."
+        build_port
+    else
+        # No changes
+        echo "macports base no changes from git"
+    fi
+    # check for ports changes
+    echo "Checking for changes in ports"
+    # this seems buggy. need to test on a couple boxes
+    if (git -C /opt/mports/macports-ports diff-index --quiet HEAD); then
+        git -C /opt/mports/macports-ports pull
+        echo "ports updated, syncing now..."
+        sudo /opt/local/bin/port sync
+        echo "upgrading outdated ports"
+        sudo /opt/local/bin/port upgrade outdated
+        echo "uninstalling inactive ports"
+        sudo /opt/local/bin/port uninstall inactive
+    else
+        # No changes
+        echo "macports ports no changes from git"
+    fi
+}
+
+set_default_shell() {
+    echo "default shell"
+    # add macports bash to /etc/shells
+
+}
+
+if [[ $CLEANUP_MACPORTS == 0 ]]; then
+    cleanup_macports
+fi
+
+if [[ $INSTALL_MACPORTS == 0 ]]; then
+    install_macports
+fi
+
+if [[ $PORTLIST_MACPORTS == 0 ]]; then
+    install_ports
+fi
+
+if [[ $UPGRADE_PORTS == 0 ]]; then
+    update_ports
+fi
+
+# kill all background jobs
+for proc in $(jobs -p); do
+    kill $proc
+done
+
+exit 0
