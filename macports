@@ -31,13 +31,14 @@ OPTIONS:
    -u    Upgrade installed ports
    -h    Help
 EOF
+    kill_jobs
     exit
 }
 
 # process options and arguments
 while getopts "hcipu" OPTION; do
     case $OPTION in
-    h) usage && exit 1 ;;
+    h) usage ;;
     c) CLEANUP_MACPORTS=0 ;;
     i) INSTALL_MACPORTS=0 ;;
     p) PORTLIST_MACPORTS=0 ;;
@@ -187,17 +188,18 @@ install_macports() {
 }
 
 install_ports() {
-    echo "Installing ports from ~/blakeconfig/portlist"
+    echo "Installing ports from ./portlist"
     # test for the provided path
-    if ! [[ -e ~/blakeconfig/portlist ]]; then
-        echo "Error: port file not found! ~/blakeconfig/portlist"
+    if ! [[ -e ./portlist ]]; then
+        echo "Error: port file not found! ./portlist"
+        kill_jobs
         exit 1
     fi
 
     # loop trhough the list of ports and install them
-    #PORTS=$(< ~/blakeconfig/portlist)
+    #PORTS=$(< ./portlist)
     PORT_VARIANT=""
-    read -d '•' -a PORTS <~/blakeconfig/portlist
+    read -d '•' -a PORTS <./portlist
     for PORT in "${PORTS[@]}"; do
         echo "installing $PORT"
         #        if [[ "$PORT" == "ffmpeg" ]]; then
@@ -271,9 +273,12 @@ if [[ $UPGRADE_PORTS == 0 ]]; then
     update_ports
 fi
 
+kill_jobs() {
 # kill all background jobs
 for proc in $(jobs -p); do
     kill $proc
 done
+}
+kill_jobs
 
 exit 0

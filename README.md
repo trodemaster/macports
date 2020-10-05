@@ -32,4 +32,6 @@ Upgrade will check for ports base updates, port list updates & update as needed.
 Use the help on the cli for a reminder of the options
 
 ## Notes
+Functioning Xcode installation is a prerequisite
+
 Updating your path to inlcude /opt/local/bin is not implimented in the script. See this page for configuring your dotfiles appropriatly. https://guide.macports.org/chunked/installing.shell.html
