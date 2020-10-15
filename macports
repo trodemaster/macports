@@ -14,6 +14,13 @@ handle_sigint() {
 }
 trap handle_sigint 2
 
+# kill all background jobs
+kill_jobs() {
+for proc in $(jobs -p); do
+    kill $proc
+done
+}
+
 # Define global variables and set defaults
 CLEANUP_MACPORTS=1
 INSTALL_MACPORTS=1
@@ -188,18 +195,18 @@ install_macports() {
 }
 
 install_ports() {
-    echo "Installing ports from ./portlist"
+    echo "Installing ports from ~/code/macports/portlist"
     # test for the provided path
-    if ! [[ -e ./portlist ]]; then
-        echo "Error: port file not found! ./portlist"
+    if ! [[ -e ~/code/macports/portlist ]]; then
+        echo "Error: port file not found! ~/code/macports/portlist"
         kill_jobs
         exit 1
     fi
 
     # loop trhough the list of ports and install them
-    #PORTS=$(< ./portlist)
+    PORTS=$(< ~/code/macports/portlist)
     PORT_VARIANT=""
-    read -d '•' -a PORTS <./portlist
+    read -d '•' -a PORTS <~/code/macports/portlist
     for PORT in "${PORTS[@]}"; do
         echo "installing $PORT"
         #        if [[ "$PORT" == "ffmpeg" ]]; then
@@ -273,12 +280,7 @@ if [[ $UPGRADE_PORTS == 0 ]]; then
     update_ports
 fi
 
-kill_jobs() {
-# kill all background jobs
-for proc in $(jobs -p); do
-    kill $proc
-done
-}
+
 kill_jobs
 
 exit 0
