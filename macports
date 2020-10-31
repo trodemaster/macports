@@ -233,7 +233,8 @@ install_ports() {
 
 update_ports() {
     echo "Updating ports base"
-    if (git -C /opt/mports/macports-base diff-index --quiet HEAD); then
+    # if (git -C /opt/mports/macports-base diff-index HEAD); then
+    if [ $(git  -C /opt/mports/macports-base status --porcelain | wc -l) -ne "0" ]; then
         git -C /opt/mports/macports-base pull
         echo "ports base updated, rebuilding now..."
         build_port
@@ -244,7 +245,8 @@ update_ports() {
     # check for ports changes
     echo "Checking for changes in ports"
     # this seems buggy. need to test on a couple boxes
-    if (git -C /opt/mports/macports-ports diff-index --quiet HEAD); then
+    # if (git -C /opt/mports/macports-ports diff-index HEAD); then
+    if [ $(git  -C /opt/mports/macports-ports status --porcelain | wc -l) -ne "0" ]; then
         git -C /opt/mports/macports-ports pull
         echo "ports updated, syncing now..."
         sudo /opt/local/bin/port sync
