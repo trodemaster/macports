@@ -11,14 +11,16 @@ handle_sigint() {
     for proc in $(jobs -p); do
         kill $proc
     done
+    kill -- -$$
 }
 trap handle_sigint 2
 
 # kill all background jobs
 kill_jobs() {
-for proc in $(jobs -p); do
-    kill $proc
-done
+    for proc in $(jobs -p); do
+        kill $proc
+    done
+    kill -- -$$
 }
 
 # Define global variables and set defaults
@@ -204,7 +206,7 @@ install_ports() {
     fi
 
     # loop trhough the list of ports and install them
-    PORTS=$(< ~/code/macports/portlist)
+    PORTS=$(<~/code/macports/portlist)
     PORT_VARIANT=""
     read -d '•' -a PORTS <~/code/macports/portlist
     for PORT in "${PORTS[@]}"; do
@@ -277,7 +279,7 @@ if [[ $UPGRADE_PORTS == 0 ]]; then
     update_ports
 fi
 
-
+jobs -p
 kill_jobs
-
+kill -- -$$
 exit 0
