@@ -271,5 +271,6 @@ if [[ $UPGRADE_PORTS == 0 ]]; then
     update_ports
 fi
 
+kill_spawn
 echo "End of Line..."
 exit 0
