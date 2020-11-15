@@ -6,22 +6,16 @@ IFS=$'\n\t'
 shopt -s nullglob
 shopt -s nocaseglob
 
-# kill subprocesses if you kill this script
-handle_sigint() {
-    for proc in $(jobs -p); do
-        kill $proc
+# kill all child proceses quietly
+kill_spawn() {
+    for SPAWN in $(pgrep -P $$); do
+        kill $SPAWN 2>/dev/null
+        wait $SPAWN 2>/dev/null
     done
-    kill -- -$$
 }
-trap handle_sigint 2
 
-# kill all background jobs
-kill_jobs() {
-    for proc in $(jobs -p); do
-        kill $proc
-    done
-    kill -- -$$
-}
+# kill_spawn on exit and ctrl-c
+trap kill_spawn EXIT SIGINT
 
 # Define global variables and set defaults
 CLEANUP_MACPORTS=1
@@ -40,8 +34,7 @@ OPTIONS:
    -u    Upgrade installed ports
    -h    Help
 EOF
-    kill_jobs
-    exit
+    exit 0
 }
 
 # process options and arguments
@@ -201,7 +194,6 @@ install_ports() {
     # test for the provided path
     if ! [[ -e ~/code/macports/portlist ]]; then
         echo "Error: port file not found! ~/code/macports/portlist"
-        kill_jobs
         exit 1
     fi
 
@@ -246,11 +238,11 @@ update_ports() {
     echo "Checking for changes in ports"
     if [ $(git -C /opt/mports/macports-ports pull | wc -l) -ne "1" ]; then
         echo "ports updated, syncing now..."
-        sudo /opt/local/bin/port sync
+        sudo /opt/local/bin/port sync || true
         echo "upgrading outdated ports"
-        sudo /opt/local/bin/port upgrade outdated
+        sudo /opt/local/bin/port upgrade outdated || true
         echo "uninstalling inactive ports"
-        sudo /opt/local/bin/port uninstall inactive
+        sudo /opt/local/bin/port uninstall inactive || true
     else
         # No changes
         echo "macports ports no changes from git"
@@ -279,7 +271,5 @@ if [[ $UPGRADE_PORTS == 0 ]]; then
     update_ports
 fi
 
-jobs -p
-kill_jobs
-kill -- -$$
+echo "End of Line..."
 exit 0
