@@ -148,7 +148,7 @@ install_macports() {
     if [[ -d /opt/mports/macports-base ]]; then
         echo "Updating ports base"
         if (git -C /opt/mports/macports-base diff-index --quiet HEAD); then
-            git -C /opt/mports/macports-base pull
+            git -C /opt/mports/macports-base pull --rebase=false
             echo "ports base updated, rebuilding now..."
             build_port
         fi
@@ -167,7 +167,7 @@ install_macports() {
     # get macports ports from git
     if [[ -d /opt/mports/macports-ports ]]; then
         echo "Updating ports"
-        git -C /opt/mports/macports-ports pull
+        git -C /opt/mports/macports-ports pull --rebase=false
     else
         echo "Cloning macports-ports to /opt/mports/macports-ports"
         git clone https://github.com/macports/macports-ports.git /opt/mports/macports-ports
@@ -227,7 +227,7 @@ install_ports() {
 
 update_ports() {
     echo "Updating ports base"
-    if [ $(git -C /opt/mports/macports-base pull | wc -l) -ne "1" ]; then
+    if [ $(git -C /opt/mports/macports-base pull --rebase=false | wc -l) -ne "1" ]; then
         echo "ports base updated, rebuilding now..."
         build_port
     else
@@ -236,7 +236,7 @@ update_ports() {
     fi
     # check for ports changes
     echo "Checking for changes in ports"
-    if [ $(git -C /opt/mports/macports-ports pull | wc -l) -ne "1" ]; then
+    if [ $(git -C /opt/mports/macports-ports pull --rebase=false | wc -l) -ne "1" ]; then
         echo "ports updated, syncing now..."
         sudo /opt/local/bin/port sync || true
         echo "upgrading outdated ports"
