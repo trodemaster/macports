@@ -9,11 +9,7 @@ shopt -s nocaseglob
 # kill all child proceses quietly
 kill_spawn() {
     for SPAWN in $(pgrep -g $$); do
-       # echo "killing $SPAWN"
-        kill -9 $SPAWN #2>/dev/null
-#kill -9 -$$ #2>/dev/null
-#        wait $SPAWN 2>/dev/null
-#wait $$ 2>/dev/null
+        kill -9 $SPAWN
     done
 }
 
@@ -274,14 +270,5 @@ if [[ $UPGRADE_PORTS == 0 ]]; then
     update_ports
 fi
 
-#pgrep -P $$
-
-echo "This script is pid $$"
-pgrep -g $$
-#echo "jobs -p"
-#jobs -p
-#echo "grep sleep"
-#pgrep sleep
-#pgrep -P -$$
 echo "End of Line..."
 exit 0
