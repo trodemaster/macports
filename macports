@@ -115,8 +115,8 @@ install_macports() {
 
     # Xcode cli tools check
     if ! [[ -x /usr/bin/make ]]; then
-      xcode-select --install >/dev/null 2>&1); then
-      echo "Xcode and command line tools all need to be installed and working before running this tool. "
+      xcode-select --install >/dev/null 2>&1
+      echo "Xcode and command line tools all need to be installed and working before running this tool."
       read -n 1 -r -s -p $'Press any key after cli tools install has completed\n'
     fi
 
