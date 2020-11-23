@@ -66,7 +66,6 @@ cleanup_macports() {
 
     # prevent catch 22 and revert shell to /bin/bash
 
-
     # remove macports group
     if (dscl . -read /groups/macports >/dev/null 2>&1); then
         sudo dscl . -delete /groups/macports
@@ -113,28 +112,13 @@ build_port() {
 
 install_macports() {
     echo "Installing macports"
-    # Check for and install xcode command line tools
-    if (xcode-select --install >/dev/null 2>&1); then
-        echo "Install xcode cli tools.. accept GUI prompts"
-        echo "This was failing on big sur beta. Download from developer.apple.com directly if so"
-        read -n 1 -r -s -p $'Press any key after cli tools install has completed\n'
-    else
-        echo "Xcode command line tools available"
+
+    # Xcode cli tools check
+    if ! [[ -x /usr/bin/make ]]; then
+      xcode-select --install >/dev/null 2>&1); then
+      echo "Xcode and command line tools all need to be installed and working before running this tool. "
+      read -n 1 -r -s -p $'Press any key after cli tools install has completed\n'
     fi
-
-    # set xcode path favoring beta
-    if [[ -d /Applications/Xcode-beta.app ]]; then
-        XCODE_PATH="/Applications/Xcode-beta.app/Contents/Developer"
-    else
-        XCODE_PATH="/Applications/Xcode.app/Contents/Developer"
-    fi
-    # handle no xcode found in this section
-
-    sudo xcode-select -s $XCODE_PATH
-    # accept xcode license
-    sudo xcodebuild -license accept
-
-    # test xcode with gcc command throw error if it fails
 
     # setup ports directory
     if ! [[ -d /opt/mports ]]; then
@@ -214,15 +198,14 @@ install_ports() {
         sudo /opt/local/bin/port -N install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
     done
 
-## update shell config
-# echo '/opt/local/bin/bash' >> /etc/shells
-# chsh -s /opt/local/bin/bash
+    ## update shell config
+    # echo '/opt/local/bin/bash' >> /etc/shells
+    # chsh -s /opt/local/bin/bash
 
-# add custom port repo
-# cat /opt/local/etc/macports/sources.conf
-# file:///opt/mports/macports-ports [default]
-# file:///Users/blake/code/blakeports
-
+    # add custom port repo
+    # cat /opt/local/etc/macports/sources.conf
+    # file:///opt/mports/macports-ports [default]
+    # file:///Users/blake/code/blakeports
 
     # fixups after port installation
     sudo /opt/local/bin/port select --set python python38 || true
