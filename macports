@@ -64,6 +64,9 @@ cleanup_macports() {
         sudo dscl . -delete /Users/macports
     fi
 
+    # prevent catch 22 and revert shell to /bin/bash
+
+
     # remove macports group
     if (dscl . -read /groups/macports >/dev/null 2>&1); then
         sudo dscl . -delete /groups/macports
@@ -184,7 +187,7 @@ install_macports() {
     fi
 
     # sync the ports tree
-    /opt/local/bin/port sync
+    sudo /opt/local/bin/port sync
 
 }
 
@@ -202,10 +205,6 @@ install_ports() {
     read -d '•' -a PORTS <~/code/macports/portlist
     for PORT in "${PORTS[@]}"; do
         echo "installing $PORT"
-        #        if [[ "$PORT" == "ffmpeg" ]]; then
-        #        echo "port is ffmpeg"
-        #        PORT_VARIANT="+nonfree +darwinssl"
-        #        fi
         PORT_ITSELF=$(cut -d ' ' -f 1 <<<"$PORT")
         PORT_VARIANT_1=$(cut -d ' ' -f 2 <<<"$PORT")
         PORT_VARIANT_2=$(cut -d ' ' -f 3 <<<"$PORT")
@@ -214,6 +213,16 @@ install_ports() {
         PORT_VARIANT_5=$(cut -d ' ' -f 6 <<<"$PORT")
         sudo /opt/local/bin/port -N install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
     done
+
+## update shell config
+# echo '/opt/local/bin/bash' >> /etc/shells
+# chsh -s /opt/local/bin/bash
+
+# add custom port repo
+# cat /opt/local/etc/macports/sources.conf
+# file:///opt/mports/macports-ports [default]
+# file:///Users/blake/code/blakeports
+
 
     # fixups after port installation
     sudo /opt/local/bin/port select --set python python38 || true
