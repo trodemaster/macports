@@ -9,7 +9,7 @@ shopt -s nocaseglob
 # kill all child proceses quietly
 kill_spawn() {
   for SPAWN in $(pgrep -g $$); do
-pkill -g $$ 2>/dev/null
+pkill -g $$  > /dev/null 2>&1
 #pgrep -g $$
 #echo "kill $SPAWN"
 #kill -9 $SPAWN
