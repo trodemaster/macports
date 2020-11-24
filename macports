@@ -9,7 +9,7 @@ shopt -s nocaseglob
 # kill all child proceses quietly
 kill_spawn() {
   for SPAWN in $(pgrep -g $$); do
-kill -s SIGINT $SPAWN
+kill -s SIGHUP $SPAWN
 #    sudo kill -9 $SPAWN  2>/dev/null
 #    wait $SPAWN 2>/dev/null
   done
