@@ -10,6 +10,7 @@ shopt -s nocaseglob
 kill_spawn() {
   for SPAWN in $(pgrep -g $$); do
 pkill -g $$  > /dev/null 2>&1
+wait $$ 2>/dev/null
 #pgrep -g $$
 #echo "kill $SPAWN"
 #kill -9 $SPAWN
