@@ -12,7 +12,7 @@ kill_spawn() {
 #pkill -g $$  > /dev/null 2>&1
 #wait $$ 2>/dev/null
 #pgrep -g $$
-echo "kill $SPAWN"
+# echo "kill $SPAWN"
 kill $SPAWN
 #wait $SPAWN 2>/dev/null
 #kill -s SIGTERM $SPAWN
