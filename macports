@@ -168,10 +168,6 @@ install_macports() {
     echo "Cloning macports-ports to /opt/mports/macports-ports"
     git clone https://github.com/macports/macports-ports.git /opt/mports/macports-ports
 
-    export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-    export MANPATH=/opt/local/share/man
-    export DISPLAY=:0.0
-    #sudo port selfupdate
   fi
 
   # update sources.conf
