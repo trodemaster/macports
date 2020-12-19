@@ -5,7 +5,8 @@ bash-completion
 rsync
 glances
 readline
-perl5.30
+openssh +fido2
+•
 git
 python38
 py38-gnureadline
@@ -15,6 +16,7 @@ py38-pip
 bzip2
 fzf
 •
+perl5.30
 cliclick
 cmake
 tmux
