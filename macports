@@ -9,17 +9,17 @@ shopt -s nocaseglob
 # kill all child proceses quietly
 kill_spawn() {
   for SPAWN in $(pgrep -g $$); do
-#pkill -g $$  > /dev/null 2>&1
-#wait $$ 2>/dev/null
-#pgrep -g $$
-# echo "kill $SPAWN"
-kill $SPAWN
-#wait $SPAWN 2>/dev/null
-#kill -s SIGTERM $SPAWN
-#    sudo kill -9 $SPAWN  2>/dev/null
-#    wait $SPAWN 2>/dev/null
-#echo "remaining sleeps"
-#pgrep sleep
+    #pkill -g $$  > /dev/null 2>&1
+    #wait $$ 2>/dev/null
+    #pgrep -g $$
+    # echo "kill $SPAWN"
+    kill $SPAWN
+    #wait $SPAWN 2>/dev/null
+    #kill -s SIGTERM $SPAWN
+    #    sudo kill -9 $SPAWN  2>/dev/null
+    #    wait $SPAWN 2>/dev/null
+    #echo "remaining sleeps"
+    #pgrep sleep
   done
 }
 
@@ -58,15 +58,16 @@ while getopts "hcipu" OPTION; do
 done
 
 # get sudo
-sudo -p "Provide sudo password: " echo "Elevated"
-
-# background sudo revalidate until script ends
-{
-  while sleep 290; do
-    sudo -v
-    echo -e "\nrefreshing sudo timeout"
-  done
-} &
+if (sudo -n false >/dev/null 2>&1); then
+  sudo -p "Provide sudo password: " echo "Elevated"
+  # background sudo revalidate until script ends
+  {
+    while sleep 290; do
+      sudo -v
+      echo -e "\nrefreshing sudo timeout"
+    done
+  } &
+fi
 
 cleanup_macports() {
   # remove user account
