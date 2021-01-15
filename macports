@@ -118,7 +118,7 @@ build_port() {
   echo "make install"
   sudo make install
   echo "make distclean"
-  make distclean
+  sudo make distclean
 }
 
 install_macports() {

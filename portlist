@@ -6,25 +6,10 @@ rsync
 glances
 readline
 openssh +fido2
-•
-git
-python38
-py38-gnureadline
-py38-awscli
-py38-virtualenv
-py38-pip
-bzip2
-fzf
-•
-perl5.30
-cliclick
 cmake
 tmux
-qemu +usb +cocoa +vnc +target_ppc +target_arm
-jpeg
-ipcalc
-ffmpeg +nonfree
-p7zip
+git
+fzf
 tree
 pigz
 curl
@@ -33,6 +18,25 @@ mediainfo
 jpeginfo
 ImageMagick
 nmap
+•
+
+python38
+py38-gnureadline
+py38-awscli
+py38-virtualenv
+py38-pip
+bzip2
+
+•
+perl5.30
+cliclick
+
+qemu +usb +cocoa +vnc +target_ppc +target_arm
+jpeg
+ipcalc
+ffmpeg +nonfree
+p7zip
+
 asciidoc
 libxslt
 docbook-xsl-nons
