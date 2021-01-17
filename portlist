@@ -18,25 +18,18 @@ mediainfo
 jpeginfo
 ImageMagick
 nmap
-•
-
-python38
-py38-gnureadline
-py38-awscli
-py38-virtualenv
-py38-pip
-bzip2
-
-•
-perl5.30
-cliclick
-
 qemu +usb +cocoa +vnc +target_ppc +target_arm
+python39
+py39-gnureadline
+py39-awscli
+py39-virtualenv
+py39-pip
+bzip2
+cliclick
 jpeg
 ipcalc
 ffmpeg +nonfree
 p7zip
-
 asciidoc
 libxslt
 docbook-xsl-nons
@@ -50,4 +43,10 @@ nasm
 ninja
 pkg-config
 libgcrypt
+airspy
+airspyhf
+cmake
+go
+rtl-sdr
+youtube-dl
 •

@@ -49,7 +49,7 @@ EOF
 # process options and arguments
 while getopts "hcipu" OPTION; do
   case $OPTION in
-  h) usage ;;
+  h) usage && exit 0;;
   c) CLEANUP_MACPORTS=0 ;;
   i) INSTALL_MACPORTS=0 ;;
   p) PORTLIST_MACPORTS=0 ;;
@@ -58,8 +58,10 @@ while getopts "hcipu" OPTION; do
 done
 
 # get sudo
-if (sudo -n false >/dev/null 2>&1); then
-  sudo -p "Provide sudo password: " echo "Elevated"
+if (sudo -n true >/dev/null 2>&1); then
+  echo "No password for sudo needed..."
+else
+  sudo -p "Provide sudo password: " echo "Sudo password auto-refresh started..."
   # background sudo revalidate until script ends
   {
     while sleep 290; do
@@ -68,6 +70,7 @@ if (sudo -n false >/dev/null 2>&1); then
     done
   } &
 fi
+
 
 cleanup_macports() {
   # remove user account
