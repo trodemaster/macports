@@ -64,7 +64,7 @@ else
   sudo -p "Provide sudo password: " echo "Sudo password auto-refresh started..."
   # background sudo revalidate until script ends
   {
-    while sleep 290; do
+    while /bin/sleep 290; do
       sudo -v
       echo -e "\nrefreshing sudo timeout"
     done
