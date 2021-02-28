@@ -175,15 +175,15 @@ install_macports() {
 
   # update sources.conf
   if [[ -d ~/code/blakeports ]]; then
-    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
-      echo 'Updating /opt/local/etc/macports/sources.conf'
-      echo "file:///opt/mports/macports-ports" | sudo tee /opt/local/etc/macports/sources.conf
-    fi
     # add my custom ports if the dir exists
     BLAKEPORTS_PATH=$(compgen -G "${HOME}/code/blakeports")
     if ! (grep -q 'code/blakeports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
       echo 'Updating /opt/local/etc/macports/sources.conf'
       echo "file:///$BLAKEPORTS_PATH [default]" | sudo tee -a /opt/local/etc/macports/sources.conf
+    fi
+    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
+      echo 'Updating /opt/local/etc/macports/sources.conf'
+      echo "file:///opt/mports/macports-ports" | sudo tee /opt/local/etc/macports/sources.conf
     fi
   else
     if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
