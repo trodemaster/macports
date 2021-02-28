@@ -49,7 +49,7 @@ EOF
 # process options and arguments
 while getopts "hcipu" OPTION; do
   case $OPTION in
-  h) usage && exit 0;;
+  h) usage && exit 0 ;;
   c) CLEANUP_MACPORTS=0 ;;
   i) INSTALL_MACPORTS=0 ;;
   p) PORTLIST_MACPORTS=0 ;;
@@ -70,7 +70,6 @@ else
     done
   } &
 fi
-
 
 cleanup_macports() {
   # remove user account
@@ -175,9 +174,22 @@ install_macports() {
   fi
 
   # update sources.conf
-  if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
-    echo 'Updating /opt/local/etc/macports/sources.conf'
-    echo "file:///opt/mports/macports-ports [default]" | sudo tee /opt/local/etc/macports/sources.conf
+  if [[ -d ~/code/blakeports ]]; then
+    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
+      echo 'Updating /opt/local/etc/macports/sources.conf'
+      echo "file:///opt/mports/macports-ports" | sudo tee /opt/local/etc/macports/sources.conf
+    fi
+    # add my custom ports if the dir exists
+    BLAKEPORTS_PATH=$(compgen -G "${HOME}/code/blakeports")
+    if ! (grep -q 'code/blakeports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
+      echo 'Updating /opt/local/etc/macports/sources.conf'
+      echo "file:///$BLAKEPORTS_PATH [default]" | sudo tee -a /opt/local/etc/macports/sources.conf
+    fi
+  else
+    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
+      echo 'Updating /opt/local/etc/macports/sources.conf'
+      echo "file:///opt/mports/macports-ports [default]" | sudo tee /opt/local/etc/macports/sources.conf
+    fi
   fi
 
   # sync the ports tree

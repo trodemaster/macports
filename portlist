@@ -18,7 +18,7 @@ mediainfo
 jpeginfo
 ImageMagick
 nmap
-qemu +usb +cocoa +vnc +target_ppc +target_arm
+qemu +usb +cocoa +vnc +target_arm
 python39
 py39-gnureadline
 py39-awscli
@@ -49,4 +49,7 @@ cmake
 go
 rtl-sdr
 youtube-dl
+libao
+fftw-3
+fftw-3-single
 •
