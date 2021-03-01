@@ -18,7 +18,7 @@ mediainfo
 jpeginfo
 ImageMagick
 nmap
-qemu +usb +cocoa +vnc +target_arm
+qemu +usb +cocoa +target_arm
 python39
 py39-gnureadline
 py39-awscli
