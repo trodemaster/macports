@@ -193,7 +193,8 @@ install_macports() {
   fi
 
   # sync the ports tree
-  sudo /opt/local/bin/port -v sync
+  echo "doing port sync that will take a few minutes..."
+  time sudo /opt/local/bin/port sync
 }
 
 install_ports() {
@@ -229,11 +230,11 @@ install_ports() {
   # file:///Users/blake/code/blakeports
 
   # fixups after port installation
-  sudo /opt/local/bin/port select --set python python38 || true
-  sudo /opt/local/bin/port select --set python3 python38 || true
-  sudo /opt/local/bin/port select --set virtualenv virtualenv38 || true
-  sudo /opt/local/bin/port select --set pip pip38 || true
-  sudo /opt/local/bin/port select --set pip3 pip38 || true
+  sudo /opt/local/bin/port select --set python python39 || true
+  sudo /opt/local/bin/port select --set python3 python39 || true
+  sudo /opt/local/bin/port select --set virtualenv virtualenv39 || true
+  sudo /opt/local/bin/port select --set pip pip39 || true
+  sudo /opt/local/bin/port select --set pip3 pip39 || true
   sudo /opt/local/bin/port -f activate rsync || true
 }
 
