@@ -10,6 +10,12 @@ fzf
 tree
 wget
 cliclick
+python39
+py39-gnureadline
+py39-virtualenv
+py39-pip
+py39-powerline
+socat
 •
 rsync
 glances

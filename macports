@@ -193,7 +193,7 @@ install_macports() {
   fi
 
   # sync the ports tree
-  sudo /opt/local/bin/port sync -v
+  sudo /opt/local/bin/port -v sync
 }
 
 install_ports() {
