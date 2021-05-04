@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+shopt -s nullglob nocaseglob
+
+cd /opt/mports/macports-ports
+git pull
+portindex
+
+tar -czvf ~/code/macports/portindex.tar.gz /opt/mports/macports-ports/PortIndex*
+
+exit 0
