@@ -154,7 +154,7 @@ install_macports() {
     # test if a newer version exists in the master branch and built it if so
   else
     echo "Cloning macports-base to /opt/mports/macports-base"
-    git clone https://github.com/macports/macports-base.git /opt/mports/macports-base
+    git clone --depth 1 https://github.com/macports/macports-base.git /opt/mports/macports-base
     # git checkout v2.6.0
     echo "building ports base becasue it didin't exist"
     build_port
@@ -169,7 +169,7 @@ install_macports() {
     git -C /opt/mports/macports-ports pull --rebase=false
   else
     echo "Cloning macports-ports to /opt/mports/macports-ports"
-    git clone https://github.com/macports/macports-ports.git /opt/mports/macports-ports
+    git clone --depth 1 https://github.com/macports/macports-ports.git /opt/mports/macports-ports
 
   fi
 
