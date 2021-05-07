@@ -194,8 +194,8 @@ install_macports() {
 
   if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
     echo "Copy down PortIndex file to speed up the sync..."
-    tar -zxf ~/code/macports/portindex.tar.gz -C /opt/mports/macports-ports/
-    ls -lh /opt/mports/macports-ports/
+    /usr/bin/tar -zxf ~/code/macports/portindex.tar.gz -C /
+    ls -lh /opt/mports/macports-ports/PortIndex*
   fi
 
   # sync the ports tree
