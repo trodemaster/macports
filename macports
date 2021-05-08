@@ -192,15 +192,15 @@ install_macports() {
     fi
   fi
 
-#  if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
-#    echo "Copy down PortIndex file to speed up the sync..."
-#    /usr/bin/tar -zxf ~/code/macports/portindex.tar.gz -C /
-#    ls -lh /opt/mports/macports-ports/PortIndex*
-#  fi
+  if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
+    echo "Copy down PortIndex file to speed up the sync..."
+    /usr/bin/tar -zxf ~/code/macports/portindex.tar.gz -C /
+    ls -lh /opt/mports/macports-ports/PortIndex*
+  fi
 
-  # sync the ports tree
-#  echo "doing port sync that will take a few minutes..."
-#  time sudo /opt/local/bin/port -v sync
+# sync the ports tree
+  echo "doing port sync that will take a few minutes..."
+  time sudo /opt/local/bin/port -v sync
 }
 
 install_ports() {
