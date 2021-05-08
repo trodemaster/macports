@@ -194,8 +194,8 @@ install_macports() {
 
   if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
     echo "Copy down PortIndex file to speed up the sync..."
-    /usr/bin/curl -fsSLo /opt/mports/macports-ports/PortIndex "https://ftp.fau.de/macports/release/ports/PortIndex_darwin_20_i386/PortIndex"
-    #/usr/bin/tar -zxf ~/code/macports/portindex.tar.gz -C /
+    #/usr/bin/curl -fsSLo /opt/mports/macports-ports/PortIndex "https://ftp.fau.de/macports/release/ports/PortIndex_darwin_20_i386/PortIndex"
+    /usr/bin/tar -zxf ~/code/macports/portindex.tar.gz -C /
     cd /opt/mports/macports-ports/
     /opt/local/bin/portindex
     ls -lh /opt/mports/macports-ports/PortIndex*
@@ -261,7 +261,8 @@ update_ports() {
   echo "Checking for changes in ports"
   if [ $(git -C /opt/mports/macports-ports pull --rebase=false | wc -l) -ne "1" ]; then
     echo "ports updated, syncing now..."
-    time sudo /opt/local/bin/port sync || true
+    cd /opt/mports/macports-ports/
+    sudo /opt/local/bin/portindex || true
     echo "upgrading outdated ports"
     sudo /opt/local/bin/port upgrade outdated || true
     echo "uninstalling inactive ports"
