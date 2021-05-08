@@ -197,9 +197,8 @@ install_macports() {
     #/usr/bin/curl -fsSLo /opt/mports/macports-ports/PortIndex "https://ftp.fau.de/macports/release/ports/PortIndex_darwin_20_i386/PortIndex"
     cd /opt/mports/macports-ports/
     /usr/bin/tar -zxf ~/code/macports/portindex.tar.gz -C /
-    /opt/local/bin/portindex
     ls -lh /opt/mports/macports-ports/PortIndex*
-
+    /opt/local/bin/portindex
   fi
 
 # sync the ports tree
