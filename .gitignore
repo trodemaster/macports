@@ -1,0 +1,4 @@
+testvm/output/*
+testvm/packer_cache/*
+.DS_Store
+*.DS_Store
