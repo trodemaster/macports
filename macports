@@ -253,7 +253,7 @@ update_ports() {
     cd /opt/mports/macports-ports/
     sudo /opt/local/bin/portindex || true
     echo "upgrading outdated ports"
-    sudo /opt/local/bin/port upgrade outdated || true
+    sudo /opt/local/bin/port -s upgrade outdated || true
     echo "uninstalling inactive ports"
     sudo /opt/local/bin/port uninstall inactive || true
   else
