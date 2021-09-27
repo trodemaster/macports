@@ -249,7 +249,7 @@ update_ports() {
   fi
   # check for ports changes
   echo "Checking for changes in ports"
-  git -C /opt/mports/macports-ports .
+  git -C /opt/mports/macports-ports checkout .
   if [ "$(git -C /opt/mports/macports-ports pull --rebase=false | wc -l)" -ne "1" ]; then
     echo "ports updated, syncing now..."
     cd /opt/mports/macports-ports/
