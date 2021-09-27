@@ -239,6 +239,7 @@ install_ports() {
 
 update_ports() {
   echo "Updating ports base"
+  git -C /opt/mports/macports-base checkout .
   if [ "$(git -C /opt/mports/macports-base pull --rebase=false | wc -l)" -ne "1" ]; then
     echo "ports base updated, rebuilding now..."
     build_port
@@ -248,6 +249,7 @@ update_ports() {
   fi
   # check for ports changes
   echo "Checking for changes in ports"
+  git -C /opt/mports/macports-ports .
   if [ "$(git -C /opt/mports/macports-ports pull --rebase=false | wc -l)" -ne "1" ]; then
     echo "ports updated, syncing now..."
     cd /opt/mports/macports-ports/

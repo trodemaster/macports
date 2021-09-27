@@ -6,7 +6,6 @@ openssh +fido2
 cmake
 tmux
 git
-fzf
 tree
 wget
 cliclick
