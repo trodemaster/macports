@@ -2,7 +2,6 @@ coreutils
 jq
 bash
 bash-completion
-openssh +fido2
 cmake
 tmux
 git
@@ -16,6 +15,7 @@ py39-pip
 py39-powerline
 socat
 •
+openssh +fido2
 rsync
 glances
 readline
