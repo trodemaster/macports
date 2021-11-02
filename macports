@@ -68,6 +68,7 @@ cleanup_macports() {
   fi
 
   # prevent catch 22 and revert shell to /bin/bash
+  chsh -s /bin/bash
 
   # remove macports group
   if (dscl . -read /groups/macports >/dev/null 2>&1); then
@@ -163,23 +164,23 @@ install_macports() {
 
   fi
 
-  # update sources.conf
-  if [[ -d ~/code/blakeports ]]; then
-    # add my custom ports if the dir exists
-    BLAKEPORTS_PATH=$(compgen -G "${HOME}/code/blakeports")
-    if ! (grep -q 'code/blakeports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
-      echo 'Updating /opt/local/etc/macports/sources.conf'
-      echo "file:///$BLAKEPORTS_PATH [default]" | sudo tee /opt/local/etc/macports/sources.conf
-    fi
-    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
-      echo 'Updating /opt/local/etc/macports/sources.conf'
-      echo "file:///opt/mports/macports-ports" | sudo tee -a /opt/local/etc/macports/sources.conf
-    fi
+  # get macports ports from git
+  if [[ -d /opt/mports/blakeports ]]; then
+    echo "Updating ports"
+    git -C /opt/mports/blakeports pull --rebase=false
   else
-    if ! (grep -q 'opt/mports/macports-ports' /opt/local/etc/macports/sources.conf >/dev/null 2>&1); then
-      echo 'Updating /opt/local/etc/macports/sources.conf'
-      echo "file:///opt/mports/macports-ports [default]" | sudo tee /opt/local/etc/macports/sources.conf
-    fi
+    echo "Cloning blakeports to /opt/mports/blakeports"
+    git clone --depth 1 https://github.com/trodemaster/blakeports.git /opt/mports/blakeports
+
+  fi
+
+  # update sources.conf
+  if [[ -d /opt/mports/blakeports ]]; then
+    # add my custom ports if the dir exists
+    sudo tee <<'SOURCES'
+file:///opt/mports/blakeports [default]
+file:///opt/mports/macports-ports
+SOURCES
   fi
 
   if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
@@ -191,9 +192,9 @@ install_macports() {
     /opt/local/bin/portindex
   fi
 
-# sync the ports tree
-#  echo "doing port sync that will take a few minutes..."
-#  time sudo /opt/local/bin/port -v sync
+  # sync the ports tree
+  echo "doing port sync that will take a few minutes..."
+  time sudo /opt/local/bin/port -v sync
 }
 
 install_ports() {
@@ -219,22 +220,27 @@ install_ports() {
     sudo /opt/local/bin/port -N -s install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
   done
 
-  ## update shell config
-  # echo '/opt/local/bin/bash' >> /etc/shells
-  # chsh -s /opt/local/bin/bash
+  # update /etc/shells
+  if ! grep -q "/opt/local/bin/bash" /etc/shells; then
+    sudo tee -a /etc/shells <<<"/opt/local/bin/bash"
+  fi
 
-  # add custom port repo
-  # cat /opt/local/etc/macports/sources.conf
-  # file:///opt/mports/macports-ports [default]
-  # file:///Users/blake/code/blakeports
+  # set bash 5 as default shell
+  if [[ -e /opt/local/bin/bash ]]; then
+    sudo chsh -s /opt/local/bin/bash $USER
+  fi
 
   # fixups after port installation
-  sudo /opt/local/bin/port select --set python python39 || true
-  sudo /opt/local/bin/port select --set python3 python39 || true
-  sudo /opt/local/bin/port select --set virtualenv virtualenv39 || true
-  sudo /opt/local/bin/port select --set pip pip39 || true
-  sudo /opt/local/bin/port select --set pip3 pip39 || true
-  sudo /opt/local/bin/port -f activate rsync || true
+  if [[ -e /opt/local/bin/python3.9 ]]; then
+    sudo /opt/local/bin/port select --set python python39 || true
+    sudo /opt/local/bin/port select --set python3 python39 || true
+    sudo /opt/local/bin/port select --set virtualenv virtualenv39 || true
+    sudo /opt/local/bin/port select --set pip pip39 || true
+    sudo /opt/local/bin/port select --set pip3 pip39 || true
+  fi
+  if [[ -e /opt/local/bin/rsync ]]; then
+    sudo /opt/local/bin/port -f activate rsync || true
+  fi
 }
 
 update_ports() {
