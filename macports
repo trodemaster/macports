@@ -185,7 +185,7 @@ SOURCES
 
   if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
     echo "Copy down PortIndex file to speed up the sync..."
-    sudo /usr/bin/tar -xf ~/code/macports/PortIndex.tgz --directory /opt/mports/macports-ports/
+    /usr/bin/tar -xf ~/code/macports/PortIndex.tgz -C /
     ls -lh /opt/mports/macports-ports/PortIndex*
     /opt/local/bin/portindex
   fi
