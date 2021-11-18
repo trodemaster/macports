@@ -185,9 +185,7 @@ SOURCES
 
   if ! [[ -e /opt/mports/macports-ports/PortIndex ]]; then
     echo "Copy down PortIndex file to speed up the sync..."
-    cp ~/code/macports/PortIndex.gz /opt/mports/macports-ports/
-    cd /opt/mports/macports-ports/
-    gunzip PortIndex.gz
+    sudo /usr/bin/tar -xf ~/code/macports/PortIndex.tgz --directory /opt/mports/macports-ports/
     ls -lh /opt/mports/macports-ports/PortIndex*
     /opt/local/bin/portindex
   fi
@@ -261,7 +259,7 @@ update_ports() {
     cd /opt/mports/macports-ports/
     sudo /opt/local/bin/portindex || true
     echo "upgrading outdated ports"
-    sudo /opt/local/bin/port -s upgrade outdated || true
+    sudo /opt/local/bin/port upgrade outdated || true
     echo "uninstalling inactive ports"
     sudo /opt/local/bin/port uninstall inactive || true
   else
