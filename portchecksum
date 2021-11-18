@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+shopt -s nullglob nocaseglob
+
+if ! [[ -f $1 ]]; then
+  echo "Target files $1 not found"
+fi
+
+FILESIZE=$(stat --printf="%s" $1)
+RMD160=$(openssl dgst -rmd160 $1 | cut -f 2 -d ' ')
+SHA256=$(openssl dgst -sha256 $1 | cut -f 2 -d ' ')
+
+
+PORTINFO=$(cat <<PORTINFO
+checksums           rmd160  $RMD160 \
+                    sha256  $SHA256 \
+                    size    $FILESIZE
+PORTINFO
+)
+
+echo $PORTINFO | pbcopy

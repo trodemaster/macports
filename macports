@@ -217,7 +217,7 @@ install_ports() {
     PORT_VARIANT_3=$(cut -d ' ' -f 4 <<<"$PORT")
     PORT_VARIANT_4=$(cut -d ' ' -f 5 <<<"$PORT")
     PORT_VARIANT_5=$(cut -d ' ' -f 6 <<<"$PORT")
-    sudo /opt/local/bin/port -N -s install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
+    sudo /opt/local/bin/port -N install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
   done
 
   # update /etc/shells

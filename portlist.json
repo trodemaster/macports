@@ -1,0 +1,10 @@
+{
+  "portlist": [
+    {
+      "port": "qemu +vnc +usg"
+    },
+    {
+      "port": "p7z"
+    }
+  ]
+}

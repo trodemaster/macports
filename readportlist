@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+INPUT=$(jq . portlist.json)
+
+for PORT in $(jq -r .portlist[].port <<<"$INPUT"); do
+  echo "sudo port install $PORT"
+done
