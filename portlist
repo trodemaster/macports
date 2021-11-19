@@ -12,8 +12,6 @@ bash
 bash-completion 
 bbe 
 bison 
-bison 
-bison-runtime 
 bison-runtime 
 brotli 
 bsdiff 
@@ -53,7 +51,6 @@ fribidi
 fzf 
 gawk 
 gd2 
-gdbm 
 gdbm 
 gdk-pixbuf2 
 gettext 
@@ -106,7 +103,6 @@ libedit
 libevent 
 libfdk-aac 
 libfec 
-libffi 
 libffi 
 libfido2 
 libgcc 
@@ -162,14 +158,12 @@ nasm
 ncurses 
 nettle 
 ninja 
-ninja 
 nmap 
 nzbget 
 oniguruma6 
 openexr 
 openjpeg 
 openssh 
-openssl 
 openssl 
 openssl11 
 ossp-uuid 
@@ -192,7 +186,6 @@ py39-babel
 py39-beaker 
 py39-bootstrap-modules 
 py39-certifi 
-py39-certifi 
 py39-chardet 
 py39-charset-normalizer 
 py39-crypto 
@@ -202,7 +195,6 @@ py39-docutils
 py39-filelock 
 py39-future 
 py39-gnureadline 
-py39-idna 
 py39-idna 
 py39-imagesize 
 py39-importlib-metadata 
@@ -218,9 +210,7 @@ py39-pip
 py39-psutil 
 py39-pygments 
 py39-requests 
-py39-requests 
 py39-roman 
-py39-setuptools 
 py39-setuptools 
 py39-six 
 py39-snowballstemmer 
@@ -232,7 +222,6 @@ py39-sphinxcontrib-jsmath
 py39-sphinxcontrib-qthelp 
 py39-sphinxcontrib-serializinghtml 
 py39-tz 
-py39-urllib3 
 py39-urllib3 
 py39-virtualenv 
 py39-zipp 
