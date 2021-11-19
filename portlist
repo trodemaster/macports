@@ -29,12 +29,6 @@ dav1d
 db48 
 djvulibre 
 docbook-xml 
-docbook-xml-4.1.2 
-docbook-xml-4.2 
-docbook-xml-4.3 
-docbook-xml-4.4 
-docbook-xml-4.5 
-docbook-xml-5.0 
 docbook-xsl-nons 
 docker 
 docutils_select 
@@ -63,7 +57,6 @@ gmake
 gmp 
 gnutls 
 go 
-go-1.4 
 gobject-introspection 
 google-cloud-sdk 
 graphite2 
@@ -106,8 +99,6 @@ libfec
 libffi 
 libfido2 
 libgcc 
-libgcc10 
-libgcc11 
 libgcrypt 
 libgpg-error 
 libheif 
@@ -165,7 +156,6 @@ openexr
 openjpeg 
 openssh 
 openssl 
-openssl11 
 ossp-uuid 
 p7zip 
 p11-kit 
@@ -174,8 +164,6 @@ pango
 pcre 
 pcre2 
 perl5 
-perl5.28 
-perl5.30 
 pigz 
 pip_select 
 pkgconfig 
@@ -259,7 +247,6 @@ wakeonlan
 webp 
 wget 
 wol 
-wxWidgets-3.2 
 wxWidgets-common 
 wxWidgets_select 
 x264 
@@ -267,22 +254,6 @@ x265
 xauth 
 Xft2 
 xmlcatmgr 
-xorg-libice 
-xorg-libpthread-stubs 
-xorg-libsm 
-xorg-libX11 
-xorg-libXau 
-xorg-libXaw 
-xorg-libxcb 
-xorg-libXdmcp 
-xorg-libXext 
-xorg-libXmu 
-xorg-libXt 
-xorg-util-macros 
-xorg-xcb-proto 
-xorg-xcb-util 
-xorg-xorgproto 
-xorg-xtrans 
 xpm 
 xrender 
 XviD 
