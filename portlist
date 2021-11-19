@@ -214,7 +214,7 @@ py39-markupsafe
 py39-packaging 
 py39-parsing 
 py39-pip 
-py39-powerline 
+-s py39-powerline 
 py39-psutil 
 py39-pygments 
 py39-requests 
