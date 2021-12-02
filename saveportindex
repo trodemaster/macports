@@ -15,4 +15,5 @@ cd $SCRIPTPATH
 
 #sudo tar -C /opt/mports/macports-ports/ -czvf  PortIndex.tgz PortIndex PortIndex.quick
 tar -czvf PortIndex.tgz /opt/mports/macports-ports/PortIndex /opt/mports/macports-ports/PortIndex.quick
+rm -f PortIndex.quick PortIndex
 exit 0
