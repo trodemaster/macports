@@ -187,7 +187,8 @@ SOURCES
     echo "Copy down PortIndex file to speed up the sync..."
     /usr/bin/tar -xf ~/code/macports/PortIndex.tgz -C /
     ls -lh /opt/mports/macports-ports/PortIndex*
-    /opt/local/bin/portindex
+    cd /opt/mports/macports-ports/
+#    /opt/local/bin/portindex
   fi
 
   # sync the ports tree
