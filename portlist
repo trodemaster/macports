@@ -266,4 +266,3 @@ zimg
 zlib 
 zstd 
 qemu +target_arm +target_ppc +target_i386 +target_x86_64 +vnc +usb +cocoa
-•

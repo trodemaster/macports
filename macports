@@ -2,7 +2,7 @@
 # Use built in bash to avoid issues with deleting the macports version
 
 set -euo pipefail
-IFS=$'\n\t'
+#IFS=$'\n\t'
 shopt -s nullglob
 shopt -s nocaseglob
 
@@ -21,6 +21,7 @@ CLEANUP_MACPORTS=1
 INSTALL_MACPORTS=1
 PORTLIST_MACPORTS=1
 UPGRADE_PORTS=1
+SOURCE_MODE=1
 
 # print out usage
 usage() {
@@ -28,8 +29,9 @@ usage() {
 USAGE: ./macports -c -i -p
 OPTIONS:
    -c    Fully remove macports
-   -i    Install macports and ports tree from git
+   -i    Install macports
    -p    Install ports from file list
+   -s    Source mode
    -u    Upgrade installed ports
    -h    Help
 EOF
@@ -37,11 +39,12 @@ EOF
 }
 
 # process options and arguments
-while getopts "hcipu" OPTION; do
+while getopts "hcispu" OPTION; do
   case $OPTION in
   h) usage && exit 0 ;;
   c) CLEANUP_MACPORTS=0 ;;
   i) INSTALL_MACPORTS=0 ;;
+  s) SOURCE_MODE=0 ;;
   p) PORTLIST_MACPORTS=0 ;;
   u) UPGRADE_PORTS=0 ;;
   esac
@@ -62,18 +65,18 @@ else
 fi
 
 cleanup_macports() {
-  # remove user account
-  if (dscl . -read /Users/macports >/dev/null 2>&1); then
-    sudo dscl . -delete /Users/macports
-  fi
+#  # remove user account
+#  if (dscl . -read /Users/macports >/dev/null 2>&1); then
+#    sudo dscl . -delete /Users/macports
+#  fi
 
   # prevent catch 22 and revert shell to /bin/bash
   chsh -s /bin/bash
 
-  # remove macports group
-  if (dscl . -read /groups/macports >/dev/null 2>&1); then
-    sudo dscl . -delete /groups/macports
-  fi
+#  # remove macports group
+#  if (dscl . -read /groups/macports >/dev/null 2>&1); then
+#    sudo dscl . -delete /groups/macports
+#  fi
 
   # build array of directorys to cleanup
   declare -a TARGET_DIRS=("/opt/local"
@@ -134,6 +137,7 @@ install_macports() {
     echo "Port dir /opt/mports exists already.."
   fi
 
+if [[ $SOURCE_MODE == 0 ]]; then
   # get macports base code
   if [[ -d /opt/mports/macports-base ]]; then
     echo "Updating ports base"
@@ -161,18 +165,8 @@ install_macports() {
   else
     echo "Cloning macports-ports to /opt/mports/macports-ports"
     git clone --depth 1 https://github.com/macports/macports-ports.git /opt/mports/macports-ports
-
   fi
 
-  # get blakeports ports from git
-  if [[ -d /opt/mports/blakeports ]]; then
-    echo "Updating ports"
-    git -C /opt/mports/blakeports pull --rebase=false
-  else
-    echo "Cloning blakeports to /opt/mports/blakeports"
-    git clone --depth 1 https://github.com/trodemaster/blakeports.git /opt/mports/blakeports
-
-  fi
 
   # update sources.conf
   if [[ -d /opt/mports/blakeports ]]; then
@@ -194,6 +188,33 @@ SOURCES
   # sync the ports tree
   echo "doing port sync that will take a few minutes..."
   time sudo /opt/local/bin/port -v sync
+
+else
+  # install macports from binary distro
+  curl -s https://mirror.fcix.net/macports/distfiles/MacPorts/MacPorts-2.8.0-13-Ventura.pkg -o ${TMPDIR}MacPorts-2.8.0-13-Ventura.pkg
+  sudo installer -pkg ${TMPDIR}MacPorts-2.8.0-13-Ventura.pkg -target /
+
+  # update sources.conf
+  if [[ -d /opt/mports/blakeports ]]; then
+    # add my custom ports if the dir exists
+    sudo tee <<'SOURCES' /opt/local/etc/macports/sources.conf
+file:///opt/mports/blakeports [default]
+rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
+SOURCES
+  fi
+
+fi
+
+  # get blakeports ports from git
+  if [[ -d /opt/mports/blakeports ]]; then
+    echo "Updating blakeports"
+    git -C /opt/mports/blakeports pull --rebase=false
+  else
+    echo "Cloning blakeports to /opt/mports/blakeports"
+    git clone --depth 1 https://github.com/trodemaster/blakeports.git /opt/mports/blakeports
+
+  fi
+
 }
 
 install_ports() {
@@ -204,20 +225,8 @@ install_ports() {
     exit 1
   fi
 
-  # loop trhough the list of ports and install them
-  PORTS=$(<~/code/macports/portlist)
-  PORT_VARIANT=""
-  read -d '•' -a PORTS <~/code/macports/portlist
-  for PORT in "${PORTS[@]}"; do
-    echo "installing $PORT"
-    PORT_ITSELF=$(cut -d ' ' -f 1 <<<"$PORT")
-    PORT_VARIANT_1=$(cut -d ' ' -f 2 <<<"$PORT")
-    PORT_VARIANT_2=$(cut -d ' ' -f 3 <<<"$PORT")
-    PORT_VARIANT_3=$(cut -d ' ' -f 4 <<<"$PORT")
-    PORT_VARIANT_4=$(cut -d ' ' -f 5 <<<"$PORT")
-    PORT_VARIANT_5=$(cut -d ' ' -f 6 <<<"$PORT")
-    sudo /opt/local/bin/port -N install "$PORT_ITSELF" "$PORT_VARIANT_1" "$PORT_VARIANT_2" "$PORT_VARIANT_3" "$PORT_VARIANT_4" "$PORT_VARIANT_5" || true
-  done
+  # use xargs to read port list and install
+  xargs -I {} -- sudo /opt/local/bin/port -N install {} < ~/code/macports/portlist
 
   # update /etc/shells
   if ! grep -q "/opt/local/bin/bash" /etc/shells; then
@@ -244,6 +253,8 @@ install_ports() {
 
 update_ports() {
   echo "Updating ports base"
+
+  if [[ $SOURCE_MODE == 0 ]]; then
   git -C /opt/mports/macports-base checkout .
   if [ "$(git -C /opt/mports/macports-base pull --rebase=false | wc -l)" -ne "1" ]; then
     echo "ports base updated, rebuilding now..."
@@ -266,6 +277,10 @@ update_ports() {
   else
     # No changes
     echo "macports ports no changes from git"
+  fi
+  else
+  sudo port selfupdate
+  sudo port upgrade outdated
   fi
 }
 
