@@ -191,8 +191,9 @@ SOURCES
 
 else
   # install macports from binary distro
-  curl -s https://mirror.fcix.net/macports/distfiles/MacPorts/MacPorts-2.8.0-13-Ventura.pkg -o ${TMPDIR}MacPorts-2.8.0-13-Ventura.pkg
-  sudo installer -pkg ${TMPDIR}MacPorts-2.8.0-13-Ventura.pkg -target /
+  curl -s https://mirror.fcix.net/macports/distfiles/MacPorts/MacPorts-2.8.0-13-Ventura.pkg -o ~/MacPorts-2.8.0-13-Ventura.pkg
+  sudo installer -pkg ~/MacPorts-2.8.0-13-Ventura.pkg -target /
+  rm MacPorts-2.8.0-13-Ventura.pkg
 
   # update sources.conf
   if [[ -d /opt/mports/blakeports ]]; then
