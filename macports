@@ -65,18 +65,18 @@ else
 fi
 
 cleanup_macports() {
-#  # remove user account
-#  if (dscl . -read /Users/macports >/dev/null 2>&1); then
-#    sudo dscl . -delete /Users/macports
-#  fi
+  # remove user account
+  if (dscl . -read /Users/macports >/dev/null 2>&1); then
+    sudo dscl . -delete /Users/macports
+  fi
 
   # prevent catch 22 and revert shell to /bin/bash
   chsh -s /bin/bash
 
-#  # remove macports group
-#  if (dscl . -read /groups/macports >/dev/null 2>&1); then
-#    sudo dscl . -delete /groups/macports
-#  fi
+  # remove macports group
+  if (dscl . -read /groups/macports >/dev/null 2>&1); then
+    sudo dscl . -delete /groups/macports
+  fi
 
   # build array of directorys to cleanup
   declare -a TARGET_DIRS=("/opt/local"
