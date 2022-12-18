@@ -200,7 +200,7 @@ else
     # add my custom ports if the dir exists
     sudo tee <<'SOURCES' /opt/local/etc/macports/sources.conf
 file:///opt/mports/blakeports [default]
-rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
+rsync://rsync.macports.org/macports/release/tarballs/ports.tar
 SOURCES
   fi
 
