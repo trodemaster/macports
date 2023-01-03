@@ -188,7 +188,7 @@ SOURCES
     /usr/bin/tar -xf ~/code/macports/PortIndex.tgz -C /
     ls -lh /opt/mports/macports-ports/PortIndex*
     cd /opt/mports/macports-ports/
-#    /opt/local/bin/portindex
+    /opt/local/bin/portindex
   fi
 
   # sync the ports tree
@@ -252,6 +252,7 @@ update_ports() {
     # No changes
     echo "macports base no changes from git"
   fi
+  build_port
   # check for ports changes
   echo "Checking for changes in ports"
   git -C /opt/mports/macports-ports checkout .
